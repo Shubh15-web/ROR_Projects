@@ -1,0 +1,95 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <!-- Page Header -->
+      <div class="stat-card p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <%= link_to booking_path(@booking), class: "btn btn-outline-secondary me-3" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+          <div>
+            <h2 class="mb-1"><i class="fas fa-edit me-3"></i>Edit Booking</h2>
+            <p class="text-muted mb-0">Update booking #<%= @booking.id %> details</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="stat-card p-4">
+        <!-- Error Messages -->
+        <% if @booking.errors.any? %>
+          <div class="alert alert-danger mb-4">
+            <h6 class="mb-2"><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</h6>
+            <ul class="mb-0">
+              <% @booking.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with model: @booking, local: true, class: "row g-4" do |form| %>
+          <!-- Current Details Display -->
+          <div class="col-12">
+            <div class="alert alert-info">
+              <h6 class="mb-2"><i class="fas fa-info-circle me-2"></i>Current Booking Details</h6>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>User:</strong> <%= @booking.user&.name %>
+                </div>
+                <div class="col-md-4">
+                  <strong>Vehicle:</strong> <%= @booking.vehicle&.license_plate %>
+                </div>
+                <div class="col-md-4">
+                  <strong>Slot:</strong> <%= @booking.parking_slot&.slot_number %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle Selection -->
+          <div class="col-md-6">
+            <%= form.label :vehicle_id, "Select Vehicle", class: "form-label fw-bold" %>
+            <%= form.select :vehicle_id, 
+                options_from_collection_for_select(current_user.vehicles, :id, :license_plate, @booking.vehicle_id),
+                {},
+                { class: "form-select form-select-lg" } %>
+          </div>
+
+          <!-- Time Selection -->
+          <div class="col-md-6">
+            <%= form.label :start_time, "Start Time", class: "form-label fw-bold" %>
+            <%= form.datetime_local_field :start_time, 
+                class: "form-control form-control-lg", 
+                value: @booking.start_time&.strftime('%Y-%m-%dT%H:%M') %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :end_time, "End Time (Optional)", class: "form-label fw-bold" %>
+            <%= form.datetime_local_field :end_time, 
+                class: "form-control form-control-lg",
+                value: @booking.end_time&.strftime('%Y-%m-%dT%H:%M') %>
+          </div>
+
+          <!-- Status Selection -->
+          <div class="col-md-6">
+            <%= form.label :status, "Booking Status", class: "form-label fw-bold" %>
+            <%= form.select :status, 
+                options_for_select([['Active', 'active'], ['Completed', 'completed'], ['Cancelled', 'cancelled']], @booking.status),
+                {},
+                { class: "form-select form-select-lg" } %>
+          </div>
+
+          <!-- Submit -->
+          <div class="col-12">
+            <hr class="my-4">
+            <div class="d-flex gap-3">
+              <%= form.submit "Update Booking", class: "btn btn-primary btn-lg px-4" %>
+              <%= link_to "Cancel", booking_path(@booking), class: "btn btn-outline-secondary btn-lg px-4" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="stat-card p-5">
+        <div class="text-center mb-4">
+          <i class="fas fa-user-plus fa-3x text-success mb-3"></i>
+          <h2 class="fw-bold">Create Account</h2>
+          <p class="text-muted">Join our parking community</p>
+        </div>
+
+        <% if @user.errors.any? %>
+          <div class="alert alert-danger">
+            <h6 class="mb-2"><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</h6>
+            <ul class="mb-0">
+              <% @user.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with model: @user, url: register_path, local: true do |form| %>
+          <div class="mb-3">
+            <%= form.label :name, class: "form-label fw-bold" %>
+            <%= form.text_field :name, class: "form-control form-control-lg", placeholder: "Enter your full name" %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :email, class: "form-label fw-bold" %>
+            <%= form.email_field :email, class: "form-control form-control-lg", placeholder: "Enter your email" %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :password, class: "form-label fw-bold" %>
+            <%= form.password_field :password, class: "form-control form-control-lg", placeholder: "Create a password" %>
+          </div>
+
+          <div class="mb-4">
+            <%= form.label :password_confirmation, "Confirm Password", class: "form-label fw-bold" %>
+            <%= form.password_field :password_confirmation, class: "form-control form-control-lg", placeholder: "Confirm your password" %>
+          </div>
+
+          <div class="d-grid mb-3">
+            <%= form.submit "Create Account", class: "btn btn-success btn-lg" %>
+          </div>
+        <% end %>
+
+        <div class="text-center">
+          <p class="text-muted">Already have an account?</p>
+          <%= link_to "Sign In", login_path, class: "btn btn-outline-success" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

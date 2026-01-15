@@ -1,0 +1,155 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Header -->
+      <div class="stat-card p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <%= link_to parking_slots_path, class: "btn btn-outline-secondary me-3" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+          <div class="flex-grow-1">
+            <h2 class="mb-1"><i class="fas fa-parking me-3"></i>Slot <%= @parking_slot.slot_number %></h2>
+            <p class="text-muted mb-0">Parking slot details and information</p>
+          </div>
+          <div class="d-flex gap-2">
+            <%= link_to edit_parking_slot_path(@parking_slot), class: "btn btn-warning" do %>
+              <i class="fas fa-edit me-2"></i>Edit
+            <% end %>
+            <%= link_to parking_slot_path(@parking_slot), method: :delete, 
+                confirm: 'Are you sure?', class: "btn btn-danger" do %>
+              <i class="fas fa-trash me-2"></i>Delete
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slot Details -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="stat-card p-4 text-center h-100">
+            <div class="parking-slot slot-<%= @parking_slot.status %> p-4 mb-3" style="max-width: 250px; margin: 0 auto;">
+              <div class="mb-3">
+                <i class="fas fa-<%= @parking_slot.slot_type == 'car' ? 'car' : 'motorcycle' %> fa-4x"></i>
+              </div>
+              <h4 class="mb-2 fw-bold"><%= @parking_slot.slot_number %></h4>
+              <p class="mb-2">Floor <%= @parking_slot.floor %></p>
+              <div class="mb-2">
+                <span class="badge bg-light text-dark fs-6 px-3 py-2"><%= @parking_slot.status.capitalize %></span>
+              </div>
+              <small class="text-light"><%= @parking_slot.slot_type.capitalize %> Slot</small>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="stat-card p-4 h-100">
+            <h5 class="mb-4"><i class="fas fa-info-circle me-2"></i>Slot Information</h5>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="text-muted">Slot Number:</span>
+                <strong><%= @parking_slot.slot_number %></strong>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="text-muted">Floor:</span>
+                <strong><%= @parking_slot.floor %></strong>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="text-muted">Vehicle Type:</span>
+                <span class="badge bg-<%= @parking_slot.slot_type == 'car' ? 'primary' : 'success' %> fs-6 px-3 py-2">
+                  <i class="fas fa-<%= @parking_slot.slot_type == 'car' ? 'car' : 'motorcycle' %> me-2"></i>
+                  <%= @parking_slot.slot_type.capitalize %>
+                </span>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="text-muted">Status:</span>
+                <% case @parking_slot.status %>
+                <% when 'free' %>
+                  <span class="badge bg-success fs-6 px-3 py-2">Available</span>
+                <% when 'occupied' %>
+                  <span class="badge bg-danger fs-6 px-3 py-2">Occupied</span>
+                <% when 'reserved' %>
+                  <span class="badge bg-warning fs-6 px-3 py-2">Reserved</span>
+                <% when 'maintenance' %>
+                  <span class="badge bg-secondary fs-6 px-3 py-2">Maintenance</span>
+                <% end %>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2">
+                <span class="text-muted">Created:</span>
+                <strong><%= @parking_slot.created_at.strftime('%d %b %Y at %I:%M %p') %></strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Booking -->
+      <% current_booking = @parking_slot.bookings.active.first %>
+      <% if current_booking %>
+        <div class="stat-card p-4 mb-4">
+          <h5 class="mb-4"><i class="fas fa-calendar-check me-2"></i>Current Booking</h5>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="text-center">
+                <i class="fas fa-user-circle fa-3x text-primary mb-2"></i>
+                <h6 class="fw-bold"><%= current_booking.user&.name %></h6>
+                <small class="text-muted"><%= current_booking.user&.email %></small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="text-center">
+                <i class="fas fa-<%= current_booking.vehicle&.vehicle_type == 'car' ? 'car' : 'motorcycle' %> fa-3x text-success mb-2"></i>
+                <h6 class="fw-bold"><%= current_booking.vehicle&.license_plate %></h6>
+                <small class="text-muted"><%= current_booking.vehicle&.vehicle_type&.capitalize %></small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="text-center">
+                <i class="fas fa-clock fa-3x text-info mb-2"></i>
+                <h6 class="fw-bold"><%= current_booking.start_time&.strftime('%I:%M %p') %></h6>
+                <small class="text-muted"><%= current_booking.start_time&.strftime('%d %b %Y') %></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Actions -->
+      <div class="stat-card p-4">
+        <h5 class="mb-4"><i class="fas fa-cogs me-2"></i>Quick Actions</h5>
+        <div class="d-flex gap-3 flex-wrap">
+          <% if @parking_slot.status == 'free' %>
+            <%= link_to new_booking_path(slot_id: @parking_slot.id), class: "btn btn-success" do %>
+              <i class="fas fa-plus me-2"></i>Book This Slot
+            <% end %>
+          <% elsif @parking_slot.status == 'occupied' && current_booking %>
+            <%= link_to booking_path(current_booking), method: :delete, 
+                confirm: 'Release this slot?', class: "btn btn-warning" do %>
+              <i class="fas fa-sign-out-alt me-2"></i>Release Slot
+            <% end %>
+          <% end %>
+          
+          <%= link_to edit_parking_slot_path(@parking_slot), class: "btn btn-primary" do %>
+            <i class="fas fa-edit me-2"></i>Edit Slot
+          <% end %>
+          
+          <%= link_to parking_slots_path, class: "btn btn-outline-secondary" do %>
+            <i class="fas fa-list me-2"></i>All Slots
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

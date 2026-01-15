@@ -1,0 +1,57 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Page Header -->
+      <div class="stat-card p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <%= link_to parking_slot_path(@parking_slot), class: "btn btn-outline-secondary me-3" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+          <div>
+            <h2 class="mb-1"><i class="fas fa-edit me-3"></i>Edit Parking Slot</h2>
+            <p class="text-muted mb-0">Update slot <%= @parking_slot.slot_number %> details</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="stat-card p-4">
+        <%= form_with model: @parking_slot, local: true, class: "row g-3" do |form| %>
+          <div class="col-md-6">
+            <%= form.label :slot_number, class: "form-label fw-bold" %>
+            <%= form.text_field :slot_number, class: "form-control form-control-lg" %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :floor, class: "form-label fw-bold" %>
+            <%= form.number_field :floor, class: "form-control form-control-lg", min: 1, max: 10 %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :slot_type, "Vehicle Type", class: "form-label fw-bold" %>
+            <%= form.select :slot_type, 
+                options_for_select([['Car', 'car'], ['Bike', 'bike'], ['Bicycle', 'bicycle'], ['Other', 'other']], @parking_slot.slot_type),
+                {},
+                { class: "form-select form-select-lg" } %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :status, class: "form-label fw-bold" %>
+            <%= form.select :status, 
+                options_for_select([['Free', 'free'], ['Occupied', 'occupied'], ['Reserved', 'reserved'], ['Maintenance', 'maintenance']], @parking_slot.status),
+                {},
+                { class: "form-select form-select-lg" } %>
+          </div>
+
+          <div class="col-12">
+            <hr class="my-4">
+            <div class="d-flex gap-3">
+              <%= form.submit "Update Parking Slot", class: "btn btn-primary btn-lg px-4" %>
+              <%= link_to "Cancel", parking_slot_path(@parking_slot), class: "btn btn-outline-secondary btn-lg px-4" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

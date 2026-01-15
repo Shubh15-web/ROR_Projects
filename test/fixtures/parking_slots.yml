@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  slot_number: MyString
+  floor: 1
+  status: MyString
+  slot_type: MyString
+
+two:
+  slot_number: MyString
+  floor: 1
+  status: MyString
+  slot_type: MyString

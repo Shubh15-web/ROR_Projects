@@ -1,0 +1,100 @@
+<div class="container-fluid py-4">
+  <!-- Statistics Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="stat-card p-3 text-center">
+        <i class="fas fa-car fa-2x text-primary mb-2"></i>
+        <h4 class="mb-1"><%= @total_slots %></h4>
+        <p class="text-muted mb-0">Total Slots</p>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="stat-card p-3 text-center">
+        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+        <h4 class="mb-1"><%= @available_slots %></h4>
+        <p class="text-muted mb-0">Available</p>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="stat-card p-3 text-center">
+        <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
+        <h4 class="mb-1"><%= @occupied_slots %></h4>
+        <p class="text-muted mb-0">Occupied</p>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="stat-card p-3 text-center">
+        <i class="fas fa-percentage fa-2x text-info mb-2"></i>
+        <h4 class="mb-1"><%= @total_slots > 0 ? (@occupied_slots * 100 / @total_slots).round : 0 %>%</h4>
+        <p class="text-muted mb-0">Occupancy</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue Statistics - Only for Admin -->
+  <% if current_user.role == 'admin' %>
+    <div class="row mb-4">
+      <div class="col-md-4 col-sm-6 mb-3">
+        <div class="stat-card p-3 text-center">
+          <i class="fas fa-rupee-sign fa-2x text-success mb-2"></i>
+          <h4 class="mb-1">₹<%= @total_revenue %></h4>
+          <p class="text-muted mb-0">Total Revenue</p>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6 mb-3">
+        <div class="stat-card p-3 text-center">
+          <i class="fas fa-calendar-day fa-2x text-warning mb-2"></i>
+          <h4 class="mb-1">₹<%= @today_revenue %></h4>
+          <p class="text-muted mb-0">Today's Revenue</p>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6 mb-3">
+        <div class="stat-card p-3 text-center">
+          <i class="fas fa-calendar-week fa-2x text-info mb-2"></i>
+          <h4 class="mb-1">₹<%= @monthly_revenue %></h4>
+          <p class="text-muted mb-0">This Month</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Quick Actions -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="stat-card p-3">
+        <h5 class="mb-3"><i class="fas fa-bolt"></i> Quick Actions</h5>
+        <div class="d-flex flex-wrap gap-2">
+          <%= link_to bookings_path, class: "btn btn-primary" do %>
+            <i class="fas fa-plus"></i> New Booking
+          <% end %>
+          <%= link_to parking_slots_path, class: "btn btn-info" do %>
+            <i class="fas fa-th-large"></i> Manage Slots
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parking Slots Grid -->
+  <div class="row">
+    <div class="col-12">
+      <div class="stat-card p-3">
+        <h5 class="mb-3"><i class="fas fa-th-large"></i> Parking Slots</h5>
+        <div class="parking-grid">
+          <% @parking_slots.each do |slot| %>
+            <div class="parking-slot slot-<%= slot.status %> p-3 text-center" data-slot-id="<%= slot.id %>">
+              <div class="mb-2">
+                <i class="fas fa-<%= slot.slot_type == 'car' ? 'car' : 'motorcycle' %> fa-2x"></i>
+              </div>
+              <h6 class="mb-1"><%= slot.slot_number %></h6>
+              <small>Floor <%= slot.floor %></small>
+              <div class="mt-2">
+                <span class="badge bg-light text-dark"><%= slot.status.capitalize %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

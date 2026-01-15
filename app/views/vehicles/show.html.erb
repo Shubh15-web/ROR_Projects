@@ -1,0 +1,153 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Header -->
+      <div class="stat-card p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <%= link_to vehicles_path, class: "btn btn-outline-secondary me-3" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+          <div class="flex-grow-1">
+            <h2 class="mb-1"><i class="fas fa-<%= @vehicle.vehicle_type == 'car' ? 'car' : 'motorcycle' %> me-3"></i><%= @vehicle.license_plate %></h2>
+            <p class="text-muted mb-0">Vehicle details and booking history</p>
+          </div>
+          <div class="d-flex gap-2">
+            <%= link_to edit_vehicle_path(@vehicle), class: "btn btn-warning" do %>
+              <i class="fas fa-edit me-2"></i>Edit
+            <% end %>
+            <%= link_to vehicle_path(@vehicle), method: :delete, 
+                confirm: 'Are you sure?', class: "btn btn-danger" do %>
+              <i class="fas fa-trash me-2"></i>Delete
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicle Details -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="stat-card p-4 text-center h-100">
+            <div class="mb-4">
+              <i class="fas fa-<%= @vehicle.vehicle_type == 'car' ? 'car' : 'motorcycle' %> fa-5x text-<%= @vehicle.vehicle_type == 'car' ? 'primary' : 'success' %>"></i>
+            </div>
+            <h3 class="fw-bold mb-2"><%= @vehicle.license_plate %></h3>
+            <p class="text-muted mb-3"><%= @vehicle.owner_name %></p>
+            <span class="badge bg-<%= @vehicle.vehicle_type == 'car' ? 'primary' : 'success' %> fs-5 px-4 py-2">
+              <%= @vehicle.vehicle_type.capitalize %>
+            </span>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="stat-card p-4 h-100">
+            <h5 class="mb-4"><i class="fas fa-info-circle me-2"></i>Vehicle Information</h5>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="text-muted">License Plate:</span>
+                <strong><%= @vehicle.license_plate %></strong>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="text-muted">Owner:</span>
+                <strong><%= @vehicle.owner_name %></strong>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="text-muted">Type:</span>
+                <span class="badge bg-<%= @vehicle.vehicle_type == 'car' ? 'primary' : 'success' %> fs-6 px-3 py-2">
+                  <%= @vehicle.vehicle_type.capitalize %>
+                </span>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span class="text-muted">Registered User:</span>
+                <strong><%= @vehicle.user&.name || 'N/A' %></strong>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center py-2">
+                <span class="text-muted">Registered:</span>
+                <strong><%= @vehicle.created_at.strftime('%d %b %Y') %></strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking History -->
+      <div class="stat-card p-4">
+        <h5 class="mb-4"><i class="fas fa-history me-2"></i>Booking History</h5>
+        
+        <% if @vehicle.bookings.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Slot</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <th>Status</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @vehicle.bookings.order(created_at: :desc).each do |booking| %>
+                  <tr>
+                    <td>
+                      <strong><%= booking.parking_slot&.slot_number %></strong>
+                      <br><small class="text-muted">Floor <%= booking.parking_slot&.floor %></small>
+                    </td>
+                    <td>
+                      <div><%= booking.start_time&.strftime('%d %b %Y') %></div>
+                      <small class="text-muted"><%= booking.start_time&.strftime('%I:%M %p') %></small>
+                    </td>
+                    <td>
+                      <% if booking.end_time %>
+                        <div><%= booking.end_time.strftime('%d %b %Y') %></div>
+                        <small class="text-muted"><%= booking.end_time.strftime('%I:%M %p') %></small>
+                      <% else %>
+                        <span class="text-muted">Ongoing</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% case booking.status %>
+                      <% when 'active' %>
+                        <span class="badge bg-primary">Active</span>
+                      <% when 'completed' %>
+                        <span class="badge bg-success">Completed</span>
+                      <% when 'cancelled' %>
+                        <span class="badge bg-danger">Cancelled</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if booking.end_time && booking.start_time %>
+                        <% duration = ((booking.end_time - booking.start_time) / 1.hour).round(1) %>
+                        <strong><%= duration %> hrs</strong>
+                      <% else %>
+                        <span class="text-muted">-</span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+            <h6 class="text-muted">No booking history found</h6>
+            <p class="text-muted">This vehicle hasn't been used for parking yet</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

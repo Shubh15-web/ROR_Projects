@@ -1,0 +1,27 @@
+// ActiveAdmin SCSS
+@import "active_admin/mixins";
+@import "active_admin/base";
+
+// Custom admin styles
+body.active_admin {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.sidebar {
+  background: #f8f9fa;
+  border-right: 1px solid #dee2e6;
+}
+
+.sidebar ul li a {
+  color: #495057;
+  transition: all 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+  background: #e9ecef;
+  color: #007bff;
+}

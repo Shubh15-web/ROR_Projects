@@ -1,0 +1,117 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Page Header -->
+      <div class="stat-card p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <%= link_to vehicles_path, class: "btn btn-outline-secondary me-3" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+          <div>
+            <h2 class="mb-1"><i class="fas fa-plus-circle me-3"></i>Register Vehicle</h2>
+            <p class="text-muted mb-0">Add a new vehicle to the parking system</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="stat-card p-4">
+        <!-- Error Messages -->
+        <% if @vehicle.errors.any? %>
+          <div class="alert alert-danger mb-4">
+            <h6 class="mb-2"><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</h6>
+            <ul class="mb-0">
+              <% @vehicle.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with model: @vehicle, local: true, class: "row g-3" do |form| %>
+          <div class="col-md-6">
+            <%= form.label :license_plate, "License Plate", class: "form-label fw-bold" %>
+            <%= form.text_field :license_plate, 
+                class: "form-control form-control-lg", 
+                placeholder: "e.g., DL01AB1234",
+                style: "text-transform: uppercase;" %>
+            <div class="form-text">Enter vehicle registration number</div>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :owner_name, "Owner Name", class: "form-label fw-bold" %>
+            <%= form.text_field :owner_name, 
+                class: "form-control form-control-lg", 
+                placeholder: "e.g., John Doe" %>
+            <div class="form-text">Full name of vehicle owner</div>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :vehicle_type, "Vehicle Type", class: "form-label fw-bold" %>
+            <div class="row g-2 mt-1">
+              <div class="col-6">
+                <input type="radio" class="btn-check" name="vehicle[vehicle_type]" id="car" value="car" <%= 'checked' if @vehicle.vehicle_type == 'car' %>>
+                <label class="btn btn-outline-primary w-100 p-3" for="car">
+                  <i class="fas fa-car fa-2x mb-2 d-block"></i>
+                  <strong>Car</strong>
+                </label>
+              </div>
+              <div class="col-6">
+                <input type="radio" class="btn-check" name="vehicle[vehicle_type]" id="bike" value="bike" <%= 'checked' if @vehicle.vehicle_type == 'bike' %>>
+                <label class="btn btn-outline-success w-100 p-3" for="bike">
+                  <i class="fas fa-motorcycle fa-2x mb-2 d-block"></i>
+                  <strong>Bike</strong>
+                </label>
+              </div>
+              <div class="col-6">
+                <input type="radio" class="btn-check" name="vehicle[vehicle_type]" id="bicycle" value="bicycle" <%= 'checked' if @vehicle.vehicle_type == 'bicycle' %>>
+                <label class="btn btn-outline-info w-100 p-3" for="bicycle">
+                  <i class="fas fa-bicycle fa-2x mb-2 d-block"></i>
+                  <strong>Bicycle</strong>
+                </label>
+              </div>
+              <div class="col-6">
+                <input type="radio" class="btn-check" name="vehicle[vehicle_type]" id="other" value="other" <%= 'checked' if @vehicle.vehicle_type == 'other' %>>
+                <label class="btn btn-outline-warning w-100 p-3" for="other">
+                  <i class="fas fa-truck fa-2x mb-2 d-block"></i>
+                  <strong>Other</strong>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <hr class="my-4">
+            <div class="d-flex gap-3">
+              <%= form.submit "Register Vehicle", class: "btn btn-primary btn-lg px-4" %>
+              <%= link_to "Cancel", vehicles_path, class: "btn btn-outline-secondary btn-lg px-4" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Preview Card -->
+      <div class="stat-card p-4 mt-4">
+        <h5 class="mb-3"><i class="fas fa-eye me-2"></i>Preview</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="text-center p-3 border rounded">
+              <i class="fas fa-car fa-3x text-primary mb-3"></i>
+              <h6 class="fw-bold">DL01AB1234</h6>
+              <p class="text-muted mb-2">John Doe</p>
+              <span class="badge bg-primary">Car</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="text-center p-3 border rounded">
+              <i class="fas fa-motorcycle fa-3x text-success mb-3"></i>
+              <h6 class="fw-bold">MH12CD5678</h6>
+              <p class="text-muted mb-2">Jane Smith</p>
+              <span class="badge bg-success">Bike</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

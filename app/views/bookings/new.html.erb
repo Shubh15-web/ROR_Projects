@@ -1,0 +1,112 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <!-- Page Header -->
+      <div class="stat-card p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <%= link_to bookings_path, class: "btn btn-outline-secondary me-3" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+          <div>
+            <h2 class="mb-1"><i class="fas fa-plus-circle me-3"></i>New Booking</h2>
+            <p class="text-muted mb-0">Reserve a parking slot for a vehicle</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="stat-card p-4">
+        <%= form_with model: @booking, local: true, class: "row g-4", id: "booking-form" do |form| %>
+          <!-- Vehicle Number Input -->
+          <div class="col-md-6">
+            <%= form.label :vehicle_license_plate, "Vehicle Number *", class: "form-label fw-bold" %>
+            <%= form.text_field :vehicle_license_plate, 
+                class: "form-control form-control-lg #{'is-invalid' if @booking.errors[:vehicle_license_plate].any? || (@booking.vehicle&.errors&.any?)}", 
+                placeholder: "Enter vehicle number (e.g., DL01AB1234, MH12DE5678)",
+                style: "text-transform: uppercase;" %>
+            <% if @booking.errors[:vehicle_license_plate].any? || (@booking.vehicle&.errors&.any?) %>
+              <div class="invalid-feedback">
+                <%= @booking.errors[:vehicle_license_plate].first || @booking.vehicle&.errors&.full_messages&.first %>
+              </div>
+            <% else %>
+              <div class="form-text">Enter your vehicle license plate number</div>
+            <% end %>
+          </div>
+
+          <!-- Parking Slot Selection -->
+          <div class="col-12">
+            <%= form.label :parking_slot_id, "Select Available Slot *", class: "form-label fw-bold" %>
+            <% if @booking.errors[:parking_slot_id].any? %>
+              <div class="alert alert-danger mt-2">
+                <i class="fas fa-exclamation-triangle me-2"></i><%= @booking.errors[:parking_slot_id].first %>
+              </div>
+            <% end %>
+            <div class="row g-3 mt-2">
+              <% @available_slots.each do |slot| %>
+                <div class="col-md-3">
+                  <input type="radio" class="btn-check" name="booking[parking_slot_id]" id="slot_<%= slot.id %>" value="<%= slot.id %>" <%= 'checked' if @booking.parking_slot_id == slot.id %>>
+                  <label class="btn btn-outline-success w-100 p-3" for="slot_<%= slot.id %>">
+                    <div class="text-center">
+                      <i class="fas fa-<%= slot.slot_type == 'car' ? 'car' : 'motorcycle' %> fa-2x mb-2"></i>
+                      <div class="fw-bold"><%= slot.slot_number %></div>
+                      <small>Floor <%= slot.floor %></small>
+                      <div class="mt-1">
+                        <span class="badge bg-success"><%= slot.slot_type.capitalize %></span>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+            <% if @available_slots.empty? %>
+              <div class="alert alert-warning mt-3">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                No available slots at the moment. Please try again later.
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Time Selection -->
+          <div class="col-md-6">
+            <%= form.label :start_time, "Start Time", class: "form-label fw-bold" %>
+            <%= form.datetime_local_field :start_time, 
+                class: "form-control form-control-lg #{'is-invalid' if @booking.errors[:start_time].any?}", 
+                value: @booking.start_time&.strftime('%Y-%m-%dT%H:%M') || Time.current.strftime('%Y-%m-%dT%H:%M') %>
+            <% if @booking.errors[:start_time].any? %>
+              <div class="invalid-feedback">
+                <%= @booking.errors[:start_time].first %>
+              </div>
+            <% else %>
+              <div class="form-text">When does parking start?</div>
+            <% end %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :end_time, "End Time (Optional)", class: "form-label fw-bold" %>
+            <%= form.datetime_local_field :end_time, 
+                class: "form-control form-control-lg #{'is-invalid' if @booking.errors[:end_time].any?}",
+                value: @booking.end_time&.strftime('%Y-%m-%dT%H:%M') %>
+            <% if @booking.errors[:end_time].any? %>
+              <div class="invalid-feedback">
+                <%= @booking.errors[:end_time].first %>
+              </div>
+            <% else %>
+              <div class="form-text">Leave empty for open-ended booking</div>
+            <% end %>
+          </div>
+
+          <!-- Submit -->
+          <div class="col-12">
+            <hr class="my-4">
+            <div class="d-flex gap-3">
+              <%= form.submit "Create Booking", class: "btn btn-primary btn-lg px-4", id: "submit-btn" %>
+              <%= link_to "Cancel", bookings_path, class: "btn btn-outline-secondary btn-lg px-4" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="<%= asset_path('booking_validation.js') %>"></script>

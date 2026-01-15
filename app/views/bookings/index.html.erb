@@ -1,0 +1,161 @@
+<div class="container-fluid py-4">
+  <!-- Page Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="stat-card p-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="mb-1"><i class="fas fa-calendar-check me-3"></i>Bookings</h2>
+            <p class="text-muted mb-0">Manage all parking bookings</p>
+          </div>
+          <%= link_to new_booking_path, class: "btn btn-primary" do %>
+            <i class="fas fa-plus me-2"></i>New Booking
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3">
+      <div class="stat-card p-3 text-center">
+        <i class="fas fa-clock fa-2x text-primary mb-2"></i>
+        <h4 class="mb-1"><%= @bookings.where(status: 'active').count %></h4>
+        <p class="text-muted mb-0">Active</p>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="stat-card p-3 text-center">
+        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+        <h4 class="mb-1"><%= @bookings.where(status: 'completed').count %></h4>
+        <p class="text-muted mb-0">Completed</p>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="stat-card p-3 text-center">
+        <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
+        <h4 class="mb-1"><%= @bookings.where(status: 'cancelled').count %></h4>
+        <p class="text-muted mb-0">Cancelled</p>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="stat-card p-3 text-center">
+        <i class="fas fa-list fa-2x text-info mb-2"></i>
+        <h4 class="mb-1"><%= @bookings.count %></h4>
+        <p class="text-muted mb-0">Total</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bookings Table -->
+  <div class="row">
+    <div class="col-12">
+      <div class="stat-card p-4">
+        <h5 class="mb-4"><i class="fas fa-list me-2"></i>All Bookings</h5>
+        
+        <% if @bookings.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>User</th>
+                  <th>Slot</th>
+                  <th>Vehicle</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @bookings.each do |booking| %>
+                  <tr>
+                    <td><strong>#<%= booking.id %></strong></td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-user-circle fa-lg text-primary me-2"></i>
+                        <div>
+                          <div class="fw-bold"><%= booking.user&.name || 'N/A' %></div>
+                          <small class="text-muted"><%= booking.user&.email %></small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-parking fa-lg text-info me-2"></i>
+                        <div>
+                          <div class="fw-bold"><%= booking.parking_slot&.slot_number || 'N/A' %></div>
+                          <small class="text-muted">Floor <%= booking.parking_slot&.floor %></small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-<%= booking.vehicle&.vehicle_type == 'car' ? 'car' : 'motorcycle' %> fa-lg text-success me-2"></i>
+                        <div>
+                          <div class="fw-bold"><%= booking.vehicle&.license_plate || 'N/A' %></div>
+                          <small class="text-muted"><%= booking.vehicle&.vehicle_type&.capitalize %></small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="fw-bold"><%= booking.start_time&.strftime('%d %b %Y') %></div>
+                      <small class="text-muted"><%= booking.start_time&.strftime('%I:%M %p') %></small>
+                    </td>
+                    <td>
+                      <% if booking.end_time %>
+                        <div class="fw-bold"><%= booking.end_time.strftime('%d %b %Y') %></div>
+                        <small class="text-muted"><%= booking.end_time.strftime('%I:%M %p') %></small>
+                      <% else %>
+                        <span class="text-muted">Ongoing</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% case booking.status %>
+                      <% when 'active' %>
+                        <span class="badge bg-primary fs-6 px-3 py-2">Active</span>
+                      <% when 'completed' %>
+                        <span class="badge bg-success fs-6 px-3 py-2">Completed</span>
+                      <% when 'cancelled' %>
+                        <span class="badge bg-danger fs-6 px-3 py-2">Cancelled</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <div class="d-flex gap-2">
+                        <%= link_to booking_path(booking), class: "btn btn-sm btn-outline-primary" do %>
+                          <i class="fas fa-eye"></i>
+                        <% end %>
+                        <%= link_to edit_booking_path(booking), class: "btn btn-sm btn-outline-warning" do %>
+                          <i class="fas fa-edit"></i>
+                        <% end %>
+                        <% if booking.status == 'active' %>
+                          <%= button_to booking_path(booking), method: :delete, 
+                              data: { confirm: 'Are you sure you want to cancel this booking?' }, 
+                              class: "btn btn-sm btn-outline-danger border-0",
+                              form: { style: "display: inline;" } do %>
+                            <i class="fas fa-times"></i>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-5">
+            <i class="fas fa-calendar-times fa-4x text-muted mb-4"></i>
+            <h4 class="text-muted mb-3">No Bookings Found</h4>
+            <p class="text-muted mb-4">Start by creating your first booking</p>
+            <%= link_to new_booking_path, class: "btn btn-primary btn-lg" do %>
+              <i class="fas fa-plus me-2"></i>Create First Booking
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

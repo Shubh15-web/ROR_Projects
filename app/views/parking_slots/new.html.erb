@@ -1,0 +1,112 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Page Header -->
+      <div class="stat-card p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <%= link_to parking_slots_path, class: "btn btn-outline-secondary me-3" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+          <div>
+            <h2 class="mb-1"><i class="fas fa-plus-circle me-3"></i>Add New Parking Slot</h2>
+            <p class="text-muted mb-0">Create a new parking slot in the system</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="stat-card p-4">
+        <!-- Error Messages -->
+        <% if @parking_slot.errors.any? %>
+          <div class="alert alert-danger mb-4">
+            <h6 class="mb-2"><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</h6>
+            <ul class="mb-0">
+              <% @parking_slot.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with model: @parking_slot, local: true, class: "row g-3" do |form| %>
+          <div class="col-md-6">
+            <%= form.label :slot_number, class: "form-label fw-bold" %>
+            <%= form.text_field :slot_number, class: "form-control form-control-lg #{'is-invalid' if @parking_slot.errors[:slot_number].any?}", placeholder: "e.g., A001, B205" %>
+            <% if @parking_slot.errors[:slot_number].any? %>
+              <div class="invalid-feedback">
+                <%= @parking_slot.errors[:slot_number].first %>
+              </div>
+            <% else %>
+              <div class="form-text">Enter unique slot identifier (Format: A001, B205)</div>
+            <% end %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :floor, class: "form-label fw-bold" %>
+            <%= form.number_field :floor, class: "form-control form-control-lg #{'is-invalid' if @parking_slot.errors[:floor].any?}", min: 1, max: 10 %>
+            <% if @parking_slot.errors[:floor].any? %>
+              <div class="invalid-feedback">
+                <%= @parking_slot.errors[:floor].first %>
+              </div>
+            <% else %>
+              <div class="form-text">Floor number (1-10)</div>
+            <% end %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :slot_type, "Vehicle Type", class: "form-label fw-bold" %>
+            <%= form.select :slot_type, 
+                options_for_select([['Car', 'car'], ['Bike', 'bike'], ['Bicycle', 'bicycle'], ['Other', 'other']], @parking_slot.slot_type),
+                { prompt: 'Select vehicle type' },
+                { class: "form-select form-select-lg #{'is-invalid' if @parking_slot.errors[:slot_type].any?}" } %}
+            <% if @parking_slot.errors[:slot_type].any? %>
+              <div class="invalid-feedback">
+                <%= @parking_slot.errors[:slot_type].first %>
+              </div>
+            <% else %>
+              <div class="form-text">Type of vehicles allowed</div>
+            <% end %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :status, class: "form-label fw-bold" %>
+            <%= form.select :status, 
+                options_for_select([['Free', 'free'], ['Occupied', 'occupied'], ['Reserved', 'reserved'], ['Maintenance', 'maintenance']], @parking_slot.status),
+                { prompt: 'Select status' },
+                { class: "form-select form-select-lg #{'is-invalid' if @parking_slot.errors[:status].any?}" } %>
+            <% if @parking_slot.errors[:status].any? %>
+              <div class="invalid-feedback">
+                <%= @parking_slot.errors[:status].first %>
+              </div>
+            <% else %>
+              <div class="form-text">Current slot status</div>
+            <% end %>
+          </div>
+
+          <div class="col-12">
+            <hr class="my-4">
+            <div class="d-flex gap-3">
+              <%= form.submit "Create Parking Slot", class: "btn btn-primary btn-lg px-4" %>
+              <%= link_to "Cancel", parking_slots_path, class: "btn btn-outline-secondary btn-lg px-4" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Preview Card -->
+      <div class="stat-card p-4 mt-4">
+        <h5 class="mb-3"><i class="fas fa-eye me-2"></i>Preview</h5>
+        <div class="parking-slot slot-free p-3 text-center" style="max-width: 200px;">
+          <div class="mb-2">
+            <i class="fas fa-car fa-2x"></i>
+          </div>
+          <h6 class="mb-1">A001</h6>
+          <small>Floor 1</small>
+          <div class="mt-2">
+            <span class="badge bg-light text-dark">Free</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

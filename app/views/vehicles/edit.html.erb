@@ -1,0 +1,89 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Page Header -->
+      <div class="stat-card p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <%= link_to vehicle_path(@vehicle), class: "btn btn-outline-secondary me-3" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+          <div>
+            <h2 class="mb-1"><i class="fas fa-edit me-3"></i>Edit Vehicle</h2>
+            <p class="text-muted mb-0">Update <%= @vehicle.license_plate %> details</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="stat-card p-4">
+        <!-- Error Messages -->
+        <% if @vehicle.errors.any? %>
+          <div class="alert alert-danger mb-4">
+            <h6 class="mb-2"><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</h6>
+            <ul class="mb-0">
+              <% @vehicle.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with model: @vehicle, local: true, class: "row g-3" do |form| %>
+          <div class="col-md-6">
+            <%= form.label :license_plate, "License Plate", class: "form-label fw-bold" %>
+            <%= form.text_field :license_plate, 
+                class: "form-control form-control-lg", 
+                style: "text-transform: uppercase;" %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :owner_name, "Owner Name", class: "form-label fw-bold" %>
+            <%= form.text_field :owner_name, class: "form-control form-control-lg" %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :vehicle_type, "Vehicle Type", class: "form-label fw-bold" %>
+            <div class="row g-2 mt-1">
+              <div class="col-6">
+                <input type="radio" class="btn-check" name="vehicle[vehicle_type]" id="edit_car" value="car" <%= 'checked' if @vehicle.vehicle_type == 'car' %>>
+                <label class="btn btn-outline-primary w-100 p-3" for="edit_car">
+                  <i class="fas fa-car fa-2x mb-2 d-block"></i>
+                  <strong>Car</strong>
+                </label>
+              </div>
+              <div class="col-6">
+                <input type="radio" class="btn-check" name="vehicle[vehicle_type]" id="edit_bike" value="bike" <%= 'checked' if @vehicle.vehicle_type == 'bike' %>>
+                <label class="btn btn-outline-success w-100 p-3" for="edit_bike">
+                  <i class="fas fa-motorcycle fa-2x mb-2 d-block"></i>
+                  <strong>Bike</strong>
+                </label>
+              </div>
+              <div class="col-6">
+                <input type="radio" class="btn-check" name="vehicle[vehicle_type]" id="edit_bicycle" value="bicycle" <%= 'checked' if @vehicle.vehicle_type == 'bicycle' %>>
+                <label class="btn btn-outline-info w-100 p-3" for="edit_bicycle">
+                  <i class="fas fa-bicycle fa-2x mb-2 d-block"></i>
+                  <strong>Bicycle</strong>
+                </label>
+              </div>
+              <div class="col-6">
+                <input type="radio" class="btn-check" name="vehicle[vehicle_type]" id="edit_other" value="other" <%= 'checked' if @vehicle.vehicle_type == 'other' %>>
+                <label class="btn btn-outline-warning w-100 p-3" for="edit_other">
+                  <i class="fas fa-truck fa-2x mb-2 d-block"></i>
+                  <strong>Other</strong>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <hr class="my-4">
+            <div class="d-flex gap-3">
+              <%= form.submit "Update Vehicle", class: "btn btn-primary btn-lg px-4" %>
+              <%= link_to "Cancel", vehicle_path(@vehicle), class: "btn btn-outline-secondary btn-lg px-4" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

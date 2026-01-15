@@ -1,0 +1,129 @@
+<div class="container-fluid py-4">
+  <!-- Page Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="stat-card p-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="mb-1"><i class="fas fa-th-large me-3"></i>Available Parking Slots</h2>
+            <p class="text-muted mb-0">Find and book your parking slot</p>
+          </div>
+          <div class="d-flex gap-3">
+            <div class="text-center">
+              <h4 class="mb-0 text-success"><%= @parking_slots.where(status: 'free').count %></h4>
+              <small class="text-muted">Available</small>
+            </div>
+            <div class="text-center">
+              <h4 class="mb-0 text-danger"><%= @parking_slots.where(status: 'occupied').count %></h4>
+              <small class="text-muted">Occupied</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="stat-card p-3">
+        <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Slot Status Legend</h6>
+        <div class="d-flex gap-4 flex-wrap">
+          <div class="d-flex align-items-center">
+            <div class="parking-slot slot-free p-2 me-2" style="width: 40px; height: 40px; min-height: auto;"></div>
+            <span>Available - Ready to book</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="parking-slot slot-occupied p-2 me-2" style="width: 40px; height: 40px; min-height: auto;"></div>
+            <span>Occupied - Currently in use</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="parking-slot slot-reserved p-2 me-2" style="width: 40px; height: 40px; min-height: auto;"></div>
+            <span>Reserved - Booked in advance</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="parking-slot slot-maintenance p-2 me-2" style="width: 40px; height: 40px; min-height: auto;"></div>
+            <span>Maintenance - Temporarily unavailable</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parking Slots Grid -->
+  <div class="parking-grid">
+    <% @parking_slots.each do |slot| %>
+      <div class="parking-slot slot-<%= slot.status %> p-4 text-center <%= 'slot-clickable' if slot.status == 'free' %>" 
+           data-slot-id="<%= slot.id %>" 
+           <%= "onclick=\"bookSlot(#{slot.id})\"" if slot.status == 'free' %>>
+        <div class="mb-3">
+          <% case slot.slot_type %>
+          <% when 'car' %>
+            <i class="fas fa-car fa-3x"></i>
+          <% when 'bike' %>
+            <i class="fas fa-motorcycle fa-3x"></i>
+          <% when 'bicycle' %>
+            <i class="fas fa-bicycle fa-3x"></i>
+          <% when 'other' %>
+            <i class="fas fa-truck fa-3x"></i>
+          <% end %>
+        </div>
+        <h5 class="mb-2 fw-bold"><%= slot.slot_number %></h5>
+        <p class="mb-2">Floor <%= slot.floor %></p>
+        <div class="mb-3">
+          <% case slot.status %>
+          <% when 'free' %>
+            <span class="badge bg-success fs-6 px-3 py-2">Available</span>
+          <% when 'occupied' %>
+            <span class="badge bg-danger fs-6 px-3 py-2">Occupied</span>
+          <% when 'reserved' %>
+            <span class="badge bg-warning fs-6 px-3 py-2">Reserved</span>
+          <% when 'maintenance' %>
+            <span class="badge bg-secondary fs-6 px-3 py-2">Maintenance</span>
+          <% end %>
+        </div>
+        <div class="mb-2">
+          <small class="text-light"><%= slot.slot_type.capitalize %> Slot</small>
+        </div>
+        
+        <!-- Customer Actions -->
+        <% if slot.status == 'free' %>
+          <div class="mt-3">
+            <%= link_to new_booking_path(slot_id: slot.id), class: "btn btn-success btn-sm" do %>
+              <i class="fas fa-plus me-1"></i>Book Now
+            <% end %>
+          </div>
+        <% elsif slot.status == 'occupied' %>
+          <div class="mt-3">
+            <small class="text-light">Currently in use</small>
+          </div>
+        <% else %>
+          <div class="mt-3">
+            <small class="text-light">Not available</small>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Empty State -->
+  <% if @parking_slots.empty? %>
+    <div class="row">
+      <div class="col-12 text-center py-5">
+        <div class="stat-card p-5">
+          <i class="fas fa-parking fa-4x text-muted mb-4"></i>
+          <h4 class="text-muted mb-3">No Parking Slots Available</h4>
+          <p class="text-muted mb-4">Please check back later or contact administration</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+function bookSlot(slotId) {
+  if (confirm('Book this parking slot?')) {
+    window.location.href = '/bookings/new?slot_id=' + slotId;
+  }
+}
+</script>

@@ -1,0 +1,182 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <!-- Header -->
+      <div class="stat-card p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <%= link_to bookings_path, class: "btn btn-outline-secondary me-3" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+          <div class="flex-grow-1">
+            <h2 class="mb-1"><i class="fas fa-calendar-check me-3"></i>Booking #<%= @booking.id %></h2>
+            <p class="text-muted mb-0">Booking details and information</p>
+          </div>
+          <div class="d-flex gap-2">
+            <% if @booking.status == 'active' %>
+              <%= link_to edit_booking_path(@booking), class: "btn btn-warning" do %>
+                <i class="fas fa-edit me-2"></i>Edit
+              <% end %>
+              <%= link_to booking_path(@booking), method: :delete, 
+                  confirm: 'Cancel this booking?', class: "btn btn-danger" do %>
+                <i class="fas fa-times me-2"></i>Cancel
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Status -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="stat-card p-4 text-center">
+            <% case @booking.status %>
+            <% when 'active' %>
+              <i class="fas fa-clock fa-4x text-primary mb-3"></i>
+              <h3 class="text-primary mb-2">Active Booking</h3>
+              <p class="text-muted">This parking slot is currently in use</p>
+            <% when 'completed' %>
+              <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+              <h3 class="text-success mb-2">Completed</h3>
+              <p class="text-muted">This booking has been completed</p>
+            <% when 'cancelled' %>
+              <i class="fas fa-times-circle fa-4x text-danger mb-3"></i>
+              <h3 class="text-danger mb-2">Cancelled</h3>
+              <p class="text-muted">This booking was cancelled</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Details -->
+      <div class="row mb-4">
+        <!-- User Info -->
+        <div class="col-md-4 mb-3">
+          <div class="stat-card p-4 text-center h-100">
+            <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
+            <h5 class="fw-bold mb-2"><%= @booking.user&.name || 'N/A' %></h5>
+            <p class="text-muted mb-2"><%= @booking.user&.email %></p>
+            <span class="badge bg-primary fs-6 px-3 py-2">Customer</span>
+          </div>
+        </div>
+
+        <!-- Vehicle Info -->
+        <div class="col-md-4 mb-3">
+          <div class="stat-card p-4 text-center h-100">
+            <i class="fas fa-<%= @booking.vehicle&.vehicle_type == 'car' ? 'car' : 'motorcycle' %> fa-4x text-success mb-3"></i>
+            <h5 class="fw-bold mb-2"><%= @booking.vehicle&.license_plate || 'N/A' %></h5>
+            <p class="text-muted mb-2"><%= @booking.vehicle&.owner_name %></p>
+            <span class="badge bg-success fs-6 px-3 py-2"><%= @booking.vehicle&.vehicle_type&.capitalize %></span>
+          </div>
+        </div>
+
+        <!-- Slot Info -->
+        <div class="col-md-4 mb-3">
+          <div class="stat-card p-4 text-center h-100">
+            <i class="fas fa-parking fa-4x text-info mb-3"></i>
+            <h5 class="fw-bold mb-2"><%= @booking.parking_slot&.slot_number || 'N/A' %></h5>
+            <p class="text-muted mb-2">Floor <%= @booking.parking_slot&.floor %></p>
+            <span class="badge bg-info fs-6 px-3 py-2"><%= @booking.parking_slot&.slot_type&.capitalize %> Slot</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Details -->
+      <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+          <div class="stat-card p-4">
+            <h5 class="mb-3"><i class="fas fa-play-circle me-2 text-success"></i>Start Time</h5>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h4 class="fw-bold mb-1"><%= @booking.start_time&.strftime('%I:%M %p') %></h4>
+                <p class="text-muted mb-0"><%= @booking.start_time&.strftime('%A, %d %B %Y') %></p>
+              </div>
+              <i class="fas fa-calendar-alt fa-2x text-muted"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <div class="stat-card p-4">
+            <h5 class="mb-3"><i class="fas fa-stop-circle me-2 text-danger"></i>End Time</h5>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <% if @booking.end_time %>
+                  <h4 class="fw-bold mb-1"><%= @booking.end_time.strftime('%I:%M %p') %></h4>
+                  <p class="text-muted mb-0"><%= @booking.end_time.strftime('%A, %d %B %Y') %></p>
+                <% else %>
+                  <h4 class="fw-bold mb-1 text-muted">Open-ended</h4>
+                  <p class="text-muted mb-0">No end time set</p>
+                <% end %>
+              </div>
+              <i class="fas fa-calendar-times fa-2x text-muted"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Duration & Cost -->
+      <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+          <div class="stat-card p-4 text-center">
+            <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+            <h5 class="mb-2">Duration</h5>
+            <% if @booking.end_time && @booking.start_time %>
+              <% duration = ((@booking.end_time - @booking.start_time) / 1.hour).round(1) %>
+              <h3 class="fw-bold text-warning"><%= duration %> hours</h3>
+            <% elsif @booking.start_time %>
+              <% current_duration = ((Time.current - @booking.start_time) / 1.hour).round(1) %>
+              <h3 class="fw-bold text-warning"><%= current_duration %> hours</h3>
+              <small class="text-muted">(ongoing)</small>
+            <% else %>
+              <h3 class="fw-bold text-muted">-</h3>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <div class="stat-card p-4 text-center">
+            <i class="fas fa-rupee-sign fa-3x text-success mb-3"></i>
+            <h5 class="mb-2">Estimated Cost</h5>
+            <% if @booking.end_time && @booking.start_time %>
+              <% duration = (((@booking.end_time - @booking.start_time) / 1.hour).ceil) %>
+              <% cost = duration * 20 %>
+              <h3 class="fw-bold text-success">₹<%= cost %></h3>
+            <% elsif @booking.start_time %>
+              <% current_duration = ((Time.current - @booking.start_time) / 1.hour).ceil %>
+              <% cost = current_duration * 20 %>
+              <h3 class="fw-bold text-success">₹<%= cost %></h3>
+              <small class="text-muted">(₹20/hour)</small>
+            <% else %>
+              <h3 class="fw-bold text-muted">₹0</h3>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="stat-card p-4">
+        <h5 class="mb-4"><i class="fas fa-cogs me-2"></i>Actions</h5>
+        <div class="d-flex gap-3 flex-wrap">
+          <% if @booking.status == 'active' %>
+            <%= link_to edit_booking_path(@booking), class: "btn btn-warning" do %>
+              <i class="fas fa-edit me-2"></i>Edit Booking
+            <% end %>
+            <%= link_to booking_path(@booking), method: :delete, 
+                confirm: 'Are you sure you want to cancel this booking?', 
+                class: "btn btn-danger" do %>
+              <i class="fas fa-times me-2"></i>Cancel Booking
+            <% end %>
+          <% end %>
+          
+          <%= link_to bookings_path, class: "btn btn-outline-secondary" do %>
+            <i class="fas fa-list me-2"></i>All Bookings
+          <% end %>
+          
+          <%= link_to parking_slot_path(@booking.parking_slot), class: "btn btn-outline-info" do %>
+            <i class="fas fa-parking me-2"></i>View Slot
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
