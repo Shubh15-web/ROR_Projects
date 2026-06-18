@@ -10,5 +10,10 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: echo "Azure Pipeline Working"
-  displayName: 'Test'
+- script: echo "Hello Azure DevOps"
+  displayName: 'Step 1'
+
+- script: |
+    pwd
+    ls -la
+  displayName: 'Step 2'
