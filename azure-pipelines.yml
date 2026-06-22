@@ -22,3 +22,15 @@ steps:
 - script: |
     bundle exec rails --version
   displayName: 'Verify Rails'
+
+- script: |
+    bundle exec rails test
+  displayName: 'Run Rails Tests'
+
+- script: |
+    bundle exec rubocop
+  displayName: 'Run Rubocop'
+
+- script: |
+    bundle exec brakeman --no-pager
+  displayName: 'Run Brakeman'
