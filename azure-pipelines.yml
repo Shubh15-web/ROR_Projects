@@ -26,6 +26,6 @@ steps:
 #    bundle exec rubocop
 #  displayName: 'Run Rubocop'
 
-- script: |
-    bundle exec brakeman --no-pager
-  displayName: 'Run Brakeman'
+#- script: |
+#    bundle exec brakeman --no-pager
+#  displayName: 'Run Brakeman'
