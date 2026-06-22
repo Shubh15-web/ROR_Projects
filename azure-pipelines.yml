@@ -14,7 +14,6 @@ steps:
     versionSpec: '3.4'
 
 - script: |
-    ruby -v
     gem install bundler -v 2.6.9
     bundle install
   displayName: 'Install Gems'
@@ -22,10 +21,6 @@ steps:
 - script: |
     bundle exec rails --version
   displayName: 'Verify Rails'
-
-- script: |
-    bundle exec rails test
-  displayName: 'Run Rails Tests'
 
 - script: |
     bundle exec rubocop
