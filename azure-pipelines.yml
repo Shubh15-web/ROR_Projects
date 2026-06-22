@@ -2,8 +2,6 @@
 # Package your Ruby project.
 # Add steps that install rails, analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/rubytrigger:
-- main
-
 trigger:
 - main
 
@@ -11,5 +9,4 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: echo "Azure Pipeline Working"
-  displayName: 'Test Pipeline'
+- script: echo "test"
