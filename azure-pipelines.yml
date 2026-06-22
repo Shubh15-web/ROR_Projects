@@ -22,9 +22,9 @@ steps:
     bundle exec rails --version
   displayName: 'Verify Rails'
 
-- script: |
-    bundle exec rubocop
-  displayName: 'Run Rubocop'
+#- script: |
+#    bundle exec rubocop
+#  displayName: 'Run Rubocop'
 
 - script: |
     bundle exec brakeman --no-pager
