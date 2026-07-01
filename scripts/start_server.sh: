@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+cd /var/www/rails-app
+RAILS_ENV=production bundle exec puma -C config/puma.rb -d --pidfile /tmp/puma.pid
